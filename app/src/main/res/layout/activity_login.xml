@@ -7,8 +7,20 @@
     tools:context=".LoginActivity"
     android:background="@color/black">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/login_scrollview_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -21,18 +33,17 @@
             android:id="@+id/login_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            >
+            android:padding="15dp">
 
             <ImageView
                 android:id="@+id/logo"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@mipmap/ic_launcher"
+                app:layout_constraintBottom_toTopOf="@+id/inner_infos_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/inner_infos_layout"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,10 +62,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingTop="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/nc_username_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/nc_username_layout">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/nc_server_text_view"
@@ -79,10 +90,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingTop="15dp"
+                    app:layout_constraintBottom_toTopOf="@+id/nc_password_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/nc_server_layout"
-                    app:layout_constraintBottom_toTopOf="@+id/nc_password_layout">
+                    app:layout_constraintTop_toBottomOf="@+id/nc_server_layout">
 
                     <TextView
                         android:id="@+id/nc_username_text_view"
@@ -137,13 +148,13 @@
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Next"
-                android:src="@drawable/navigate_next"
                 android:backgroundTint="#3b7eca"
-                app:layout_constraintTop_toBottomOf="@+id/inner_infos_layout"
+                android:src="@drawable/navigate_next"
+                android:text="Next"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/inner_infos_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
