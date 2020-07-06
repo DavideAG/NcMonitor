@@ -5,5 +5,11 @@ NcMonitor is a native [WearOS](https://wearos.google.com/#hands-free-help) appli
 <p align="center">
 <img src="./images/login.png" 
       alt="NcMonitor login " 
-      height="300" />
+      height="250" />
+</p>
+
+<p align="center">
+<img src="./images/status.png" 
+      alt="NcMonitor status " 
+      height="245" />
 </p>
