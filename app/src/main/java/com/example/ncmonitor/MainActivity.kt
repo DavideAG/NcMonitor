@@ -1,22 +1,32 @@
-package com.example.ncmonitor
-
-/**
- * Created by Davide Antonino Giorgio on 02-07-2020.
+/*
+ * NcMonitor WearOS application
+ *
+ * @author Davide Antonino Giorgio
+ * Copyright (C) 2020 Davide Antonino Giorgio
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU AFFERO GENERAL PUBLIC LICENSE for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import android.content.pm.PackageManager
-import android.os.Build
+package com.example.ncmonitor
+
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.*
-import okhttp3.Credentials.basic
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
-import kotlin.math.round
 
 const val GB = 1073741824
 const val Byte = 1024
@@ -25,7 +35,8 @@ const val Byte = 1024
 const val N_CORES = 4
 
 
-class MainActivity : WearableActivity() {
+class MainActivity : WearableActivity()
+{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,15 +44,15 @@ class MainActivity : WearableActivity() {
 
         // Enables Always-on
         setAmbientEnabled()
-
         val extras = intent.extras
         if (extras != null)
             showResults(extras.getString("response")!!)
-
-        //requestNcStatus()
     }
 
-
+    /* This method shows the results retrieved from
+     * the server. View are populated correctly.
+     * In case of error a message is displayed
+     */
     private fun showResults(response: String)
     {
         try {
@@ -78,7 +89,6 @@ class MainActivity : WearableActivity() {
                 updateViews(cpuLoad, ramTotal-ramFree, ramTotal,
                     swapTotal-swapFree, swapTotal, diskFree)
 
-
             } else {
                 cpu_layout.visibility = View.GONE
                 ram_layout.visibility = View.GONE
@@ -87,7 +97,6 @@ class MainActivity : WearableActivity() {
                 status_code_response_used_placeholder.text = statusCode.toString()
                 status_message_response_placeholder.text = metaObject.getString("message")
             }
-
         } catch (e: JSONException) {
             Log.d("requestNcStatus","JsonException!!")
             warning_icon.visibility = View.GONE
@@ -96,8 +105,13 @@ class MainActivity : WearableActivity() {
         }
     }
 
+    /* This method is used to format the disk usage
+     */
     fun Double.format(digits: Int) = "%.${digits}f".format(this)
 
+    /* This method is used to populate the views
+     * using the information coming from the server.
+     */
     private fun updateViews(cpuLoad :Double, ramBusy :Long, ramTotal :Long, swapBusy :Long, swapTotal :Long, diskFree :Double)
     {
 
@@ -109,7 +123,6 @@ class MainActivity : WearableActivity() {
         ram_total_placeholder.text = (ramTotal / Byte).toString()
         swap_used_placeholder.text = (swapBusy /Byte).toString()
         swap_total_placeholder.text = (swapTotal / Byte).toString()
-
         disk_used_placeholder.text = (diskFree / GB).format(2)
     }
 }

@@ -1,3 +1,23 @@
+/*
+ * NcMonitor WearOS application
+ *
+ * @author Davide Antonino Giorgio
+ * Copyright (C) 2020 Davide Antonino Giorgio
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU AFFERO GENERAL PUBLIC LICENSE for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.example.ncmonitor
 
 import android.content.Context
@@ -6,27 +26,23 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
-import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.webkit.URLUtil
-import android.widget.RadioButton
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Credentials.basic
 import org.json.JSONObject
 import okhttp3.*
 import org.json.JSONException
 import java.io.IOException
 
-
 const val SERVERINFO_API = "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
 const val PERMISSION_REQUEST = 10
 const val PREF_KEY = "profile"
 const val PREF_NAME = "USER"
+
 
 class LoginActivity : WearableActivity()
 {
@@ -57,7 +73,6 @@ class LoginActivity : WearableActivity()
                 userJson.get("password").toString()
             )
         }
-
         checkAndRequestPermissions()
         btn_next.setOnClickListener { onNextClicked() }
     }
@@ -137,7 +152,8 @@ class LoginActivity : WearableActivity()
                         userInfo.put("username", username)
                         userInfo.put("password", password)
 
-                        val sharedPref = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                        val sharedPref =
+                            getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
                         with(sharedPref.edit()) {
                             putString(PREF_KEY, userInfo.toString())
                             apply()
@@ -181,17 +197,16 @@ class LoginActivity : WearableActivity()
                 Log.d("inputs","ServerURL: $serverURL \ninvalid url")
                 return
             }
-
             if (serverURL.last() != '/') {
                 serverURL += '/'
             }
-
             serverURL += SERVERINFO_API
-
             requestNcStatus(serverURL,
-                nc_username_input.text.toString(), nc_password_input.text.toString())
+                nc_username_input.text.toString(),
+                nc_password_input.text.toString())
         } else {
-            Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,
+                "All fields are mandatory", Toast.LENGTH_SHORT).show()
         }
     }
 
