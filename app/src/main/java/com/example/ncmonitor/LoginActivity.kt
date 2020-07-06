@@ -13,6 +13,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.webkit.URLUtil
 import android.widget.RadioButton
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Credentials.basic
@@ -22,16 +23,16 @@ import org.json.JSONException
 import java.io.IOException
 
 
-
-const val PREF_NAME = "USER"
-const val PREF_KEY = "profile"
+const val SERVERINFO_API = "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
 const val PERMISSION_REQUEST = 10
+const val PREF_KEY = "profile"
+const val PREF_NAME = "USER"
 
 class LoginActivity : WearableActivity()
 {
-
     var client = OkHttpClient()
     var request = OkHttpRequest(client)
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -44,13 +45,12 @@ class LoginActivity : WearableActivity()
         val sharedPref = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
         val userInstance = sharedPref.getString(PREF_KEY, null)
 
-        // hiding the password using dotts
+        // hiding the password using dots
         nc_password_input.transformationMethod = PasswordTransformationMethod.getInstance()
 
         if (userInstance != null) {
             //There is an instance of a user on the watch, retrieve data
             val userJson = JSONObject(userInstance)
-
             requestNcStatus(
                 userJson.get("serverURL").toString(),
                 userJson.get("username").toString(),
@@ -62,6 +62,8 @@ class LoginActivity : WearableActivity()
         btn_next.setOnClickListener { onNextClicked() }
     }
 
+    /* This method is used to request permissions
+     */
     private fun checkAndRequestPermissions()
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -78,6 +80,9 @@ class LoginActivity : WearableActivity()
         }
     }
 
+    /* This method shows the progress bar during the request phase
+     * and hide the login information
+     */
     private fun showProgressBar()
     {
         runOnUiThread {
@@ -86,6 +91,9 @@ class LoginActivity : WearableActivity()
         }
     }
 
+    /* This method shows the login information
+     * and hide the progress bar
+     */
     private fun showLoginFields()
     {
         runOnUiThread {
@@ -94,6 +102,9 @@ class LoginActivity : WearableActivity()
         }
     }
 
+    /* This method is used to navigate to the result activity
+     * when the response comes from your NC server
+     */
     private fun navigateToResults(responseData: String)
     {
         val intent = Intent(this, MainActivity::class.java)
@@ -101,6 +112,10 @@ class LoginActivity : WearableActivity()
         startActivity(intent)
     }
 
+    /* This method is used to request the server status to your
+     * NC instance. Then, if the result code is 200_OK, results
+     * are passed to the next activity.
+     */
     private fun requestNcStatus(serverURL :String, username :String, password :String)
     {
         showProgressBar()
@@ -148,9 +163,11 @@ class LoginActivity : WearableActivity()
                 showLoginFields()
             }
         })
-
     }
 
+    /* This method is used to take the input information from the
+     * user and build the correct request parameters.
+     */
     private fun onNextClicked()
     {
         if (nc_server_input.text.isNotEmpty() &&
@@ -169,13 +186,18 @@ class LoginActivity : WearableActivity()
                 serverURL += '/'
             }
 
-            serverURL += "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
+            serverURL += SERVERINFO_API
 
             requestNcStatus(serverURL,
                 nc_username_input.text.toString(), nc_password_input.text.toString())
+        } else {
+            Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
         }
     }
 
+    /* This method is used to take the input information regarding
+     * the protocol to use (http or https) from the radio buttons.
+     */
     private fun attachProtocol(): String
     {
         return if (radio_button_http.isChecked) {
