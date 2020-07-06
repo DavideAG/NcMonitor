@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@mipmap/ic_launcher"
                 app:layout_constraintBottom_toTopOf="@+id/inner_infos_layout"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -75,9 +75,30 @@
                         android:textAppearance="@android:style/TextAppearance.Material.Medium"
                         android:textStyle="bold" />
 
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="left"
+                        >
+
+                    <RadioButton
+                        android:id="@+id/radio_button_http"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="http://"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_https"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="https://"
+                            android:checked="true" />
+                    </RadioGroup>
+
                     <EditText
                         android:id="@+id/nc_server_input"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Insert the server url"
                         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
@@ -137,7 +158,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="Insert your password"
-                        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 </LinearLayout>
 
