@@ -14,7 +14,7 @@ NcMonitor is a native [WearOS](https://wearos.google.com/#hands-free-help) appli
       height="325" />
 </p>
 
-## Displayed metrics
+## Displayed metrics :mag:
 Currently this application is still under development and the information that are displayed are:
 
 - CPU usage (last-minute)
@@ -26,7 +26,7 @@ The final goal is to provide to the user more information about the Nc instance.
 
 Data are retrived from [Nextcloud/serverinfo](https://github.com/nextcloud/serverinfo).
 
-## How to use it
+## How to use it :question:
 To use the application you have to install the application (see Project status) and then you have to log-in in your Nc server using:
 
 - select your HyperText Transfer Protocol (`http` or `https`)
@@ -37,11 +37,11 @@ To use the application you have to install the application (see Project status) 
 ## Changelog
 Changelog information are reported [here](https://github.com/DavideAG/NcMonitor/blob/master/CHANGELOG.md).
 
-## Project status
+## Project status :hammer_and_wrench:
 This application is in `beta` phase and is working but it is not yet released in Google Play Store.
 If you want to use this application you can download the `apk` in the release section of this repository or you can manually build the project.
 
-## License
+## License :scroll:
 This application is licensed under the `AGPLv3`
 
 ## Contact
