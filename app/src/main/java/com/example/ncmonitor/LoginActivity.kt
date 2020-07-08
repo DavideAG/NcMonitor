@@ -23,6 +23,8 @@ package com.example.ncmonitor
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
@@ -32,11 +34,15 @@ import android.view.View
 import android.webkit.URLUtil
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.Credentials.basic
-import org.json.JSONObject
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Response
 import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
+
 
 const val SERVERINFO_API = "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
 const val PERMISSION_REQUEST = 10
@@ -46,8 +52,8 @@ const val PREF_NAME = "USER"
 
 class LoginActivity : WearableActivity()
 {
-    var client = OkHttpClient()
-    var request = OkHttpRequest(client)
+    private var client = OkHttpClient()
+    private var request = OkHttpRequest(client)
 
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -64,17 +70,28 @@ class LoginActivity : WearableActivity()
         // hiding the password using dots
         nc_password_input.transformationMethod = PasswordTransformationMethod.getInstance()
 
-        if (userInstance != null) {
-            //There is an instance of a user on the watch, retrieve data
-            val userJson = JSONObject(userInstance)
-            requestNcStatus(
-                userJson.get("serverURL").toString(),
-                userJson.get("username").toString(),
-                userJson.get("password").toString()
-            )
+        if (isNetworkAvailable()) {
+            if (userInstance != null) {
+                //There is an instance of a user on the watch, retrieve data
+                val userJson = JSONObject(userInstance)
+                requestNcStatus(
+                    userJson.get("serverURL").toString(),
+                    userJson.get("username").toString(),
+                    userJson.get("password").toString()
+                )
+            }
+        } else {
+            Toast.makeText(this,
+                "Internet connection not available", Toast.LENGTH_SHORT).show()
         }
         checkAndRequestPermissions()
-        btn_next.setOnClickListener { onNextClicked() }
+        btn_next.setOnClickListener {
+            if (isNetworkAvailable())
+                onNextClicked()
+            else
+                Toast.makeText(this,
+                    "Internet connection not available", Toast.LENGTH_SHORT).show()
+        }
     }
 
     /* This method is used to request permissions
@@ -220,5 +237,16 @@ class LoginActivity : WearableActivity()
         } else {
             "https://"
         }
+    }
+
+    /* This method is used to test the connectivity
+     * https://developer.android.com/training/monitoring-device-state/connectivity-status-type
+     */
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityMgr =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo: NetworkInfo? = connectivityMgr.activeNetworkInfo
+        // if no network is available networkInfo will be null
+        return networkInfo?.isConnectedOrConnecting == true
     }
 }

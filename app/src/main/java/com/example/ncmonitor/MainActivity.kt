@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
 
+
 const val GB = 1073741824
 const val Byte = 1024
 
