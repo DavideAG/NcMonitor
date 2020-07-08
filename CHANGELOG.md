@@ -1,3 +1,10 @@
+## 0.3.0 (July, 8, 2020)
+
+- radio buttons to uspport http and https
+- dotted password field
+- check on internet connectivity
+- added header copyrighgt
+
 ## 0.2.0 (July, 5, 2020)
 
 - added login activity
