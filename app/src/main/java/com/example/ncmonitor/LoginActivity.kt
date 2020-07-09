@@ -23,8 +23,6 @@ package com.example.ncmonitor
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
@@ -48,6 +46,7 @@ const val SERVERINFO_API = "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
 const val PERMISSION_REQUEST = 10
 const val PREF_KEY = "profile"
 const val PREF_NAME = "USER"
+const val OK_200 = 200
 
 
 class LoginActivity : WearableActivity()
@@ -77,6 +76,7 @@ class LoginActivity : WearableActivity()
                 userJson.get("serverURL").toString(),
                 userJson.get("username").toString(),
                 userJson.get("password").toString(),
+                userJson.get("domain").toString(),
                 this
             )
         }
@@ -110,7 +110,7 @@ class LoginActivity : WearableActivity()
     {
         runOnUiThread {
             login_scrollview_layout.visibility = View.GONE
-            progressBar.visibility = View.VISIBLE
+            loading_layout.visibility = View.VISIBLE
         }
     }
 
@@ -121,25 +121,26 @@ class LoginActivity : WearableActivity()
     {
         runOnUiThread {
             login_scrollview_layout.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
+            loading_layout.visibility = View.GONE
         }
     }
 
     /* This method is used to navigate to the result activity
      * when the response comes from your NC server
      */
-    private fun navigateToResults(responseData: String)
+    private fun navigateToResults(responseData: String, domain :String = "ServerDomain")
     {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("response", responseData)
+        intent.putExtra("serverURL", domain)
         startActivity(intent)
     }
 
     /* This method is used to request the server status to your
-     * NC instance. Then, if the result code is 200_OK, results
+     * NC instance. Then, if the result code is OK_200, results
      * are passed to the next activity.
      */
-    private fun requestNcStatus(serverURL: String, username: String, password: String, context: Context)
+    private fun requestNcStatus(serverURL: String, username: String, password: String, domain: String, context: Context)
     {
         showProgressBar()
         val credentials = basic(username, password)
@@ -154,11 +155,12 @@ class LoginActivity : WearableActivity()
                     val metaObject = responseObject.getJSONObject("meta")
                     val statusCode = metaObject.getInt("statuscode")
 
-                    if (statusCode == 200) {
+                    if (statusCode == OK_200) {
                         val userInfo = JSONObject()
                         userInfo.put("serverURL", serverURL)
                         userInfo.put("username", username)
                         userInfo.put("password", password)
+                        userInfo.put("domain", domain)
 
                         val sharedPref =
                             getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -168,7 +170,7 @@ class LoginActivity : WearableActivity()
                         }
 
                         // navigate to the next activity
-                        navigateToResults(responseData)
+                        navigateToResults(responseData, domain)
                         // now destroying the current activity
                         finish()
                     } else {
@@ -190,13 +192,12 @@ class LoginActivity : WearableActivity()
             }
 
             override fun onFailure(call: Call?, e: IOException?) {
-                //todo: handle it showing info to the user
                 showLoginFields()
                 if (e != null) {
                     runOnUiThread {
                         Toast.makeText(
                             context,
-                            e.message + "\nCheck your internet connectivity", Toast.LENGTH_SHORT
+                            "Error during the host resolution, check the URL or your internet connectivity", Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -227,6 +228,7 @@ class LoginActivity : WearableActivity()
             requestNcStatus(serverURL,
                 nc_username_input.text.toString(),
                 nc_password_input.text.toString(),
+                nc_server_input.text.toString(),
                 this)
         } else {
             Toast.makeText(this,

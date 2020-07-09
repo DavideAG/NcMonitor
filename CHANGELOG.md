@@ -1,3 +1,10 @@
+## 0.4.0 (July, 9, 2020)
+
+- changed loading screen
+- now user errors are handled correctly
+- added sliding server domain name in the result page
+- fixed network connectivity check
+
 ## 0.3.0 (July, 8, 2020)
 
 - radio buttons to uspport http and https

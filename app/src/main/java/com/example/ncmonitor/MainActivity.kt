@@ -47,14 +47,14 @@ class MainActivity : WearableActivity()
         setAmbientEnabled()
         val extras = intent.extras
         if (extras != null)
-            showResults(extras.getString("response")!!)
+            showResults(extras.getString("response")!!, extras.getString("serverURL")!!)
     }
 
     /* This method shows the results retrieved from
      * the server. View are populated correctly.
      * In case of error a message is displayed
      */
-    private fun showResults(response: String)
+    private fun showResults(response: String, serverURL: String)
     {
         try {
             val json = JSONObject(response)
@@ -71,6 +71,8 @@ class MainActivity : WearableActivity()
             if (statusCode == 200) {
                 status_code_response_layout.visibility = View.GONE
                 status_message_response_layout.visibility = View.GONE
+                server_name_url.visibility = View.VISIBLE
+                server_name_url.text = serverURL
 
                 val dataObject =  responseObject.getJSONObject("data")
                 val nextcloudObject =  dataObject.getJSONObject("nextcloud")
