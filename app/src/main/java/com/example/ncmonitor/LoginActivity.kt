@@ -70,28 +70,19 @@ class LoginActivity : WearableActivity()
         // hiding the password using dots
         nc_password_input.transformationMethod = PasswordTransformationMethod.getInstance()
 
-        if (isNetworkAvailable()) {
-            if (userInstance != null) {
-                //There is an instance of a user on the watch, retrieve data
-                val userJson = JSONObject(userInstance)
-                requestNcStatus(
-                    userJson.get("serverURL").toString(),
-                    userJson.get("username").toString(),
-                    userJson.get("password").toString()
-                )
-            }
-        } else {
-            Toast.makeText(this,
-                "Internet connection not available", Toast.LENGTH_SHORT).show()
+        if (userInstance != null) {
+            //There is an instance of a user on the watch, retrieve data
+            val userJson = JSONObject(userInstance)
+            requestNcStatus(
+                userJson.get("serverURL").toString(),
+                userJson.get("username").toString(),
+                userJson.get("password").toString(),
+                this
+            )
         }
+
         checkAndRequestPermissions()
-        btn_next.setOnClickListener {
-            if (isNetworkAvailable())
-                onNextClicked()
-            else
-                Toast.makeText(this,
-                    "Internet connection not available", Toast.LENGTH_SHORT).show()
-        }
+        btn_next.setOnClickListener { onNextClicked() }
     }
 
     /* This method is used to request permissions
@@ -148,7 +139,7 @@ class LoginActivity : WearableActivity()
      * NC instance. Then, if the result code is 200_OK, results
      * are passed to the next activity.
      */
-    private fun requestNcStatus(serverURL :String, username :String, password :String)
+    private fun requestNcStatus(serverURL: String, username: String, password: String, context: Context)
     {
         showProgressBar()
         val credentials = basic(username, password)
@@ -186,14 +177,29 @@ class LoginActivity : WearableActivity()
                         navigateToResults(responseData)
                     }
                 } catch (e: JSONException) {
-                    Log.d("requestNcStatus","JsonException!!")
+                    Log.e("requestNcStatus","JsonException!!")
                     e.printStackTrace()
+                    runOnUiThread {
+                        Toast.makeText(
+                            context,
+                            "Check the URL, maybe it's not a NC instance", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    showLoginFields()
                 }
             }
 
             override fun onFailure(call: Call?, e: IOException?) {
                 //todo: handle it showing info to the user
                 showLoginFields()
+                if (e != null) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            context,
+                            e.message + "\nCheck your internet connectivity", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         })
     }
@@ -220,7 +226,8 @@ class LoginActivity : WearableActivity()
             serverURL += SERVERINFO_API
             requestNcStatus(serverURL,
                 nc_username_input.text.toString(),
-                nc_password_input.text.toString())
+                nc_password_input.text.toString(),
+                this)
         } else {
             Toast.makeText(this,
                 "All fields are mandatory", Toast.LENGTH_SHORT).show()
@@ -239,14 +246,4 @@ class LoginActivity : WearableActivity()
         }
     }
 
-    /* This method is used to test the connectivity
-     * https://developer.android.com/training/monitoring-device-state/connectivity-status-type
-     */
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityMgr =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo: NetworkInfo? = connectivityMgr.activeNetworkInfo
-        // if no network is available networkInfo will be null
-        return networkInfo?.isConnectedOrConnecting == true
-    }
 }
