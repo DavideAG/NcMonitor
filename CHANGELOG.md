@@ -1,3 +1,7 @@
+## 0.5.0 (July, 13, 2020)
+
+- Implemented pull down to refresh that can be used to update server metrics
+
 ## 0.4.0 (July, 9, 2020)
 
 - changed loading screen

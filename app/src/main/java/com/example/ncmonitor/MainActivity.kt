@@ -20,6 +20,7 @@
 
 package com.example.ncmonitor
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
 import android.util.Log
@@ -48,6 +49,13 @@ class MainActivity : WearableActivity()
         val extras = intent.extras
         if (extras != null)
             showResults(extras.getString("response")!!, extras.getString("serverURL")!!)
+
+        pullToRefresh.setOnRefreshListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            pullToRefresh.isRefreshing = false
+            finish()
+        }
     }
 
     /* This method shows the results retrieved from
