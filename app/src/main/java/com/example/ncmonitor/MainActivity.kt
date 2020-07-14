@@ -87,7 +87,8 @@ class MainActivity : WearableActivity()
                 val systemObject =  nextcloudObject.getJSONObject("system")
 
                 // cpu load
-                val cpuLoad = systemObject.getJSONArray("cpuload")[0] as Double
+                var cpuLoad = systemObject.getJSONArray("cpuload")[0]
+                if (cpuLoad is Int) cpuLoad = cpuLoad.toDouble()
                 // ram
                 val ramTotal = systemObject.getLong("mem_total")
                 val ramFree = systemObject.getLong("mem_free")
@@ -97,7 +98,7 @@ class MainActivity : WearableActivity()
                 // disk
                 val diskFree = systemObject.getDouble("freespace")
 
-                updateViews(cpuLoad, ramTotal-ramFree, ramTotal,
+                updateViews(cpuLoad as Double, ramTotal-ramFree, ramTotal,
                     swapTotal-swapFree, swapTotal, diskFree)
 
             } else {
@@ -123,8 +124,18 @@ class MainActivity : WearableActivity()
     /* This method is used to populate the views
      * using the information coming from the server.
      */
-    private fun updateViews(cpuLoad :Double, ramBusy :Long, ramTotal :Long, swapBusy :Long, swapTotal :Long, diskFree :Double)
+    private fun updateViews(
+        cpuLoad: Double,
+        ramBusy: Long,
+        ramTotal: Long,
+        swapBusy: Long,
+        swapTotal: Long,
+        diskFree: Double)
     {
+
+        // Todo: to move as option and let this. We can't supposing the number of cpu cores
+        //       and it has to be specified by the final user using a specific option menu.
+        // cpu_load_placeholder.text = cpuLoad.toString()
 
         val cpuLoad3Digit = Math.round(((cpuLoad*100)/N_CORES) * 1000.0) / 1000.0
         val cpuLoad2Digit = Math.round(cpuLoad3Digit * 100.0) / 100.0
@@ -134,6 +145,12 @@ class MainActivity : WearableActivity()
         ram_total_placeholder.text = (ramTotal / Byte).toString()
         swap_used_placeholder.text = (swapBusy /Byte).toString()
         swap_total_placeholder.text = (swapTotal / Byte).toString()
-        disk_used_placeholder.text = (diskFree / GB).format(2)
+
+        if (diskFree > GB)
+            disk_used_placeholder.text = (diskFree / GB).format(2)
+        else {
+            disk_used_placeholder.text = (diskFree / Byte).format(2)
+            disk_unit.text = "MB"
+        }
     }
 }
