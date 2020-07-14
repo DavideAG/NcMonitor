@@ -1,3 +1,8 @@
+## 0.5.2 (July, 14, 2020)
+
+- Calculating the disk free memory in the correct way if it is less than 1 GB
+- Fixed a potential cast issue on cpuLoad
+
 ## 0.5.0 (July, 13, 2020)
 
 - Implemented pull down to refresh that can be used to update server metrics
