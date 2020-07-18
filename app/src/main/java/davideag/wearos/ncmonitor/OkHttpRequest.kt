@@ -18,7 +18,7 @@
  * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.example.ncmonitor
+package davideag.wearos.ncmonitor
 
 import okhttp3.*
 import java.util.*

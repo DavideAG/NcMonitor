@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_grey"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
+    tools:context="davideag.wearos.ncmonitor.MainActivity"
     tools:deviceIds="wear"
     android:backgroundTint="@color/black">
 

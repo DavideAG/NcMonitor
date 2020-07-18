@@ -18,7 +18,7 @@
  * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.example.ncmonitor
+package davideag.wearos.ncmonitor
 
 import android.content.Context
 import android.content.Intent
@@ -31,6 +31,7 @@ import android.util.Log
 import android.view.View
 import android.webkit.URLUtil
 import android.widget.Toast
+import davideag.wearos.ncmonitor.R
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -99,7 +100,9 @@ class LoginActivity : WearableActivity()
                     permissionsDenied.add(permission)
 
             if(permissionsDenied.isNotEmpty())
-                requestPermissions(permissionsDenied.toTypedArray(), PERMISSION_REQUEST)
+                requestPermissions(permissionsDenied.toTypedArray(),
+                    PERMISSION_REQUEST
+                )
         }
     }
 

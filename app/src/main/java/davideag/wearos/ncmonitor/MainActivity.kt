@@ -18,13 +18,14 @@
  * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.example.ncmonitor
+package davideag.wearos.ncmonitor
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
 import android.util.Log
 import android.view.View
+import davideag.wearos.ncmonitor.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -137,13 +138,13 @@ class MainActivity : WearableActivity()
         //       and it has to be specified by the final user using a specific option menu.
         // cpu_load_placeholder.text = cpuLoad.toString()
 
-        val cpuLoad3Digit = Math.round(((cpuLoad*100)/N_CORES) * 1000.0) / 1000.0
+        val cpuLoad3Digit = Math.round(((cpuLoad*100)/ N_CORES) * 1000.0) / 1000.0
         val cpuLoad2Digit = Math.round(cpuLoad3Digit * 100.0) / 100.0
 
         cpu_load_placeholder.text =  cpuLoad2Digit.toString()
         ram_used_placeholder.text = (ramBusy / Byte).toString()
         ram_total_placeholder.text = (ramTotal / Byte).toString()
-        swap_used_placeholder.text = (swapBusy /Byte).toString()
+        swap_used_placeholder.text = (swapBusy / Byte).toString()
         swap_total_placeholder.text = (swapTotal / Byte).toString()
 
         if (diskFree > GB)
