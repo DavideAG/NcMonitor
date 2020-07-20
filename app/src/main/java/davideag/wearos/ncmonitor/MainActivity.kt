@@ -25,7 +25,6 @@ import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
 import android.util.Log
 import android.view.View
-import davideag.wearos.ncmonitor.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -41,7 +40,8 @@ const val N_CORES = 4
 class MainActivity : WearableActivity()
 {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -56,6 +56,12 @@ class MainActivity : WearableActivity()
             startActivity(intent)
             pullToRefresh.isRefreshing = false
             finish()
+        }
+
+        // used to start the options activity
+        setting_icon.setOnClickListener {
+            val intent = Intent(this, Settings::class.java)
+            startActivity(intent)
         }
     }
 
