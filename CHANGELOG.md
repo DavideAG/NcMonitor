@@ -1,3 +1,10 @@
+## 0.5.3 (April, 27, 2021)
+
+* Defined layout for settings page
+* created author ref to http://giorgiodavide.it with "Open on Phone" animation
+* added spinner for CPUs in order to compute the CPU usage in the correct way (default disabled)
+* added app version information in the setting page
+
 ## 0.5.2 (July, 14, 2020)
 
 - Calculating the disk free memory in the correct way if it is less than 1 GB
@@ -16,10 +23,10 @@
 
 ## 0.3.0 (July, 8, 2020)
 
-- radio buttons to uspport http and https
+- radio buttons to support http and https
 - dotted password field
 - check on internet connectivity
-- added header copyrighgt
+- added header copyright
 
 ## 0.2.0 (July, 5, 2020)
 
@@ -35,4 +42,4 @@
 - horizontal layout for error message
 - added OkHttpRequest class
 - new layout
-- beta implementation working for: cpuload, ram, swap, disk
+- beta implementation working for: cpuLoad, ram, swap, disk

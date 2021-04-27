@@ -32,9 +32,7 @@ import org.json.JSONObject
 
 const val GB = 1073741824
 const val Byte = 1024
-
-/* number of cores in your server. 4 for RPi4. */
-const val N_CORES = 4
+const val N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
 
 
 class MainActivity : WearableActivity()

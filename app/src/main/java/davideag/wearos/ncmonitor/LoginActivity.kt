@@ -31,7 +31,6 @@ import android.util.Log
 import android.view.View
 import android.webkit.URLUtil
 import android.widget.Toast
-import davideag.wearos.ncmonitor.R
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import okhttp3.Callback
