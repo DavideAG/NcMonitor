@@ -231,12 +231,12 @@
                             android:id="@+id/disk_text_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="HDD Free: "
+                            android:text="Disk Free: "
                             android:textAppearance="@android:style/TextAppearance.Material.Medium"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/disk_used_placeholder"
+                            android:id="@+id/disk_free_placeholder"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="--"

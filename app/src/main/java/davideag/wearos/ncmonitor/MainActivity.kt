@@ -28,9 +28,9 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 
-const val GB = 1073741824
 const val Byte = 1024
 const val N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
 
@@ -142,8 +142,8 @@ class MainActivity : WearableActivity()
         //       and it has to be specified by the final user using a specific option menu.
         // cpu_load_placeholder.text = cpuLoad.toString()
 
-        val cpuLoad3Digit = Math.round(((cpuLoad*100)/ N_CORES) * 1000.0) / 1000.0
-        val cpuLoad2Digit = Math.round(cpuLoad3Digit * 100.0) / 100.0
+        val cpuLoad3Digit = (((cpuLoad * 100) / N_CORES) * 1000.0).roundToInt() / 1000.0
+        val cpuLoad2Digit = (cpuLoad3Digit * 100.0).roundToInt() / 100.0
 
         cpu_load_placeholder.text =  cpuLoad2Digit.toString()
         ram_used_placeholder.text = (ramBusy / Byte).toString()
@@ -151,11 +151,23 @@ class MainActivity : WearableActivity()
         swap_used_placeholder.text = (swapBusy / Byte).toString()
         swap_total_placeholder.text = (swapTotal / Byte).toString()
 
-        if (diskFree > GB)
-            disk_used_placeholder.text = (diskFree / GB).format(2)
-        else {
-            disk_used_placeholder.text = (diskFree / Byte).format(2)
-            disk_unit.text = "MB"
+        val p = humanReadableByteCountBin(diskFree)
+        disk_free_placeholder.text = p.first
+        disk_unit.text = " " + p.second
+    }
+
+    /* This function is used to convert the free disk
+     * space in an human friendly measure
+     */
+    private fun humanReadableByteCountBin(bytes: Double): Pair<String, String> {
+        return when {
+            bytes == Double.MIN_VALUE || bytes < 0 -> Pair("N/A", "")
+            bytes < 1024L -> Pair("$bytes", "B")
+            bytes <= 0xfffccccccccccccL shr 40 -> Pair("%.1f".format(bytes / (0x1 shl 10)), "KiB")
+            bytes <= 0xfffccccccccccccL shr 30 -> Pair("%.1f".format(bytes / (0x1 shl 20)), "MiB")
+            bytes <= 0xfffccccccccccccL shr 20 -> Pair("%.1f".format(bytes / (0x1 shl 30)), "GiB")
+            bytes <= 0xfffccccccccccccL shr 10 -> Pair("%.1f".format(bytes / (0x1 shl 40)), "TiB")
+            else -> Pair("N/A", "")
         }
     }
 }
