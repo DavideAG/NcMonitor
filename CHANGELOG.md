@@ -1,3 +1,7 @@
+## 0.5.4 (April, 27, 2022)
+
+- added a method to show free disk space in a more human friendly way
+
 ## 0.5.3 (April, 27, 2021)
 
 * Defined layout for settings page
