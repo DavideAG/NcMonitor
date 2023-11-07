@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
 import kotlin.math.roundToInt
+import java.text.DecimalFormat
 
 
 const val Byte = 1024
@@ -78,7 +79,6 @@ class MainActivity : WearableActivity()
 
             val responseObject = json.getJSONObject("ocs")
             val metaObject = responseObject.getJSONObject("meta")
-
             val statusCode = metaObject.getInt("statuscode")
 
             if (statusCode == 200) {
@@ -87,9 +87,9 @@ class MainActivity : WearableActivity()
                 server_name_url.visibility = View.VISIBLE
                 server_name_url.text = serverURL
 
-                val dataObject =  responseObject.getJSONObject("data")
-                val nextcloudObject =  dataObject.getJSONObject("nextcloud")
-                val systemObject =  nextcloudObject.getJSONObject("system")
+                val dataObject = responseObject.getJSONObject("data")
+                val nextcloudObject = dataObject.getJSONObject("nextcloud")
+                val systemObject = nextcloudObject.getJSONObject("system")
 
                 // cpu load
                 var cpuLoad = systemObject.getJSONArray("cpuload")[0]
@@ -140,12 +140,9 @@ class MainActivity : WearableActivity()
 
         // Todo: to move as option and let this. We can't supposing the number of cpu cores
         //       and it has to be specified by the final user using a specific option menu.
-        // cpu_load_placeholder.text = cpuLoad.toString()
+        val cpuLoadPercentage = (cpuLoad / N_CORES) * 100
 
-        val cpuLoad3Digit = (((cpuLoad * 100) / N_CORES) * 1000.0).roundToInt() / 1000.0
-        val cpuLoad2Digit = (cpuLoad3Digit * 100.0).roundToInt() / 100.0
-
-        cpu_load_placeholder.text =  cpuLoad2Digit.toString()
+        cpu_load_placeholder.text =  "%.2f".format(cpuLoadPercentage)
         ram_used_placeholder.text = (ramBusy / Byte).toString()
         ram_total_placeholder.text = (ramTotal / Byte).toString()
         swap_used_placeholder.text = (swapBusy / Byte).toString()
