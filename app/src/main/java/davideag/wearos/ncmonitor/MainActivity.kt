@@ -101,7 +101,7 @@ class MainActivity : WearableActivity()
                 val swapTotal = systemObject.getLong("swap_total")
                 val swapFree = systemObject.getLong("swap_free")
                 // disk
-                val diskFree = systemObject.getDouble("freespace")
+                val diskFree = systemObject.getLong("freespace")
 
                 updateViews(cpuLoad as Double, ramTotal-ramFree, ramTotal,
                     swapTotal-swapFree, swapTotal, diskFree)
@@ -135,7 +135,7 @@ class MainActivity : WearableActivity()
         ramTotal: Long,
         swapBusy: Long,
         swapTotal: Long,
-        diskFree: Double)
+        diskFree: Long)
     {
 
         // Todo: to move as option and let this. We can't supposing the number of cpu cores
@@ -156,15 +156,16 @@ class MainActivity : WearableActivity()
     /* This function is used to convert the free disk
      * space in an human friendly measure
      */
-    private fun humanReadableByteCountBin(bytes: Double): Pair<String, String> {
+    private fun humanReadableByteCountBin(bytes: Long): Pair<String, String> {
         return when {
-            bytes == Double.MIN_VALUE || bytes < 0 -> Pair("N/A", "")
+            bytes == Long.MIN_VALUE || bytes < 0 -> Pair("N/A", "")
             bytes < 1024L -> Pair("$bytes", "B")
-            bytes <= 0xfffccccccccccccL shr 40 -> Pair("%.1f".format(bytes / (0x1 shl 10)), "KiB")
-            bytes <= 0xfffccccccccccccL shr 30 -> Pair("%.1f".format(bytes / (0x1 shl 20)), "MiB")
-            bytes <= 0xfffccccccccccccL shr 20 -> Pair("%.1f".format(bytes / (0x1 shl 30)), "GiB")
-            bytes <= 0xfffccccccccccccL shr 10 -> Pair("%.1f".format(bytes / (0x1 shl 40)), "TiB")
-            else -> Pair("N/A", "")
+            bytes <= 0xfffccccccccccccL shr 40 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 10)), "KiB")
+            bytes <= 0xfffccccccccccccL shr 30 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 20)), "MiB")
+            bytes <= 0xfffccccccccccccL shr 20 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 30)), "GiB")
+            bytes <= 0xfffccccccccccccL shr 10 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 40)), "TiB")
+            bytes <= 0xfffccccccccccccL -> Pair("%.1f".format((bytes shr 10).toDouble() / (0x1 shl 40)), "PiB")
+            else -> Pair("%.1f".format((bytes shr 20).toDouble() / (0x1 shl 40)), "EiB")
         }
     }
 }
