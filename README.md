@@ -15,34 +15,36 @@ NcMonitor is a native [WearOS](https://wearos.google.com/#hands-free-help) appli
 </p>
 
 ## Displayed metrics :mag:
-Currently this application is still under development and the information that are displayed are:
+The goal of this application is to provide information about your NC instance:
 
 - CPU usage (last-minute)
 - RAM usage
 - SWAP usage
 - Disk free space
 
-The final goal is to provide to the user more information about the Nc instance. In the future more metrics will be added.
-
-Data are retrived from [Nextcloud/serverinfo](https://github.com/nextcloud/serverinfo).
+Data are retrived from [Nextcloud/serverinfo](https://github.com/nextcloud/serverinfo) and we will provide more metrics when available.
 
 ## How to use it :question:
-To use the application you have to install the application (see Project status) and then you have to log-in in your Nc server using:
+The application requires basic authentication to communicate with the server and get back the metrics from [Nextcloud/serverinfo](https://github.com/nextcloud/serverinfo). During the first start it will require:
 
 - select your HyperText Transfer Protocol (`http` or `https`)
-- server URL (e.g. myserver.com)
+- server URL (e.g. `myserver.com`)
 - Nextcloud username
 - Nextcloud password
+
+### CPU Cores
+To calculate the app's total CPU load percentage, it requires information about the number of CPU cores in your NC instance, which is set to a default value of 4. You can modify this setting through the configuration panel.
 
 ## Changelog
 Changelog information are reported [here](https://github.com/DavideAG/NcMonitor/blob/master/CHANGELOG.md).
 
-## Project status :hammer_and_wrench:
-This application is in `beta` phase and is working but it is not yet released in Google Play Store.
-If you want to use this application you can download the `apk` in the release section of this repository or you can manually build the project.
+## Project status
+The application has not been officially launched on the Google Play Store yet. To access and use the application, you can download the APK from the release section of this repository, or alternatively, you have the option to manually build the project. The initial release will soon be made available on the Google Play Store.
+
+Please contact me if you have any problem with this installation process.
 
 ## License :scroll:
 This application is licensed under the `AGPLv3`
 
 ## Contact
-Any comment or idea about the project is appreciated. You can ping me at [davide@giorgiodavide.it](mailto:davide@giorgiodavide.it?subject=[GitHub]%20NcMonitor)
+Any comment or idea about the project is appreciated, feel free to ping me at [davide@giorgiodavide.it](mailto:davide@giorgiodavide.it?subject=[GitHub]%20NcMonitor) or open an issue on GitHub.
