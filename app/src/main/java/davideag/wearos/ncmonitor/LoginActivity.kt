@@ -40,13 +40,14 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.net.HttpURLConnection
+
 
 
 const val SERVERINFO_API = "ocs/v2.php/apps/serverinfo/api/v1/info?format=json"
 const val PERMISSION_REQUEST = 10
 const val PREF_KEY = "profile"
 const val PREF_NAME = "USER"
-const val OK_200 = 200
 
 
 class LoginActivity : WearableActivity()
@@ -139,8 +140,8 @@ class LoginActivity : WearableActivity()
     }
 
     /* This method is used to request the server status to your
-     * NC instance. Then, if the result code is OK_200, results
-     * are passed to the next activity.
+     * NC instance. Then, if the return code is HttpURLConnection.HTTP_OK
+     * results are passed to the next activity.
      */
     private fun requestNcStatus(serverURL: String, username: String, password: String, domain: String, context: Context)
     {
@@ -157,7 +158,7 @@ class LoginActivity : WearableActivity()
                     val metaObject = responseObject.getJSONObject("meta")
                     val statusCode = metaObject.getInt("statuscode")
 
-                    if (statusCode == OK_200) {
+                    if (statusCode == HttpURLConnection.HTTP_OK) {
                         val userInfo = JSONObject()
                         userInfo.put("serverURL", serverURL)
                         userInfo.put("username", username)

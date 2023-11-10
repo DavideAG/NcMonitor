@@ -28,12 +28,13 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.math.roundToInt
-import java.text.DecimalFormat
+import java.net.HttpURLConnection
+
 
 
 const val Byte = 1024
-const val N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
+var N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
+var CPU_LOAD = 0.0
 
 
 class MainActivity : WearableActivity()
@@ -64,6 +65,14 @@ class MainActivity : WearableActivity()
         }
     }
 
+    /* Refresh the cpu_load_placeholder with the new N_CORES.
+     * We need to handle the new number of CPU cores to compute the CPU load
+     */
+    override fun onRestart() {
+        super.onRestart()
+        cpu_load_placeholder.text = "%.2f".format((CPU_LOAD / N_CORES) * 100)
+    }
+
     /* This method shows the results retrieved from
      * the server. View are populated correctly.
      * In case of error a message is displayed
@@ -81,7 +90,7 @@ class MainActivity : WearableActivity()
             val metaObject = responseObject.getJSONObject("meta")
             val statusCode = metaObject.getInt("statuscode")
 
-            if (statusCode == 200) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
                 status_code_response_layout.visibility = View.GONE
                 status_message_response_layout.visibility = View.GONE
                 server_name_url.visibility = View.VISIBLE
@@ -92,8 +101,9 @@ class MainActivity : WearableActivity()
                 val systemObject = nextcloudObject.getJSONObject("system")
 
                 // cpu load
-                var cpuLoad = systemObject.getJSONArray("cpuload")[0]
-                if (cpuLoad is Int) cpuLoad = cpuLoad.toDouble()
+                CPU_LOAD = systemObject.getJSONArray("cpuload")[0] as Double
+                //var cpuLoad = systemObject.getJSONArray("cpuload")[0]
+                //if (CPU_LOAD is Int) CPU_LOAD = CPU_LOAD
                 // ram
                 val ramTotal = systemObject.getLong("mem_total")
                 val ramFree = systemObject.getLong("mem_free")
@@ -103,7 +113,7 @@ class MainActivity : WearableActivity()
                 // disk
                 val diskFree = systemObject.getLong("freespace")
 
-                updateViews(cpuLoad as Double, ramTotal-ramFree, ramTotal,
+                updateViews(ramTotal-ramFree, ramTotal,
                     swapTotal-swapFree, swapTotal, diskFree)
 
             } else {
@@ -130,7 +140,6 @@ class MainActivity : WearableActivity()
      * using the information coming from the server.
      */
     private fun updateViews(
-        cpuLoad: Double,
         ramBusy: Long,
         ramTotal: Long,
         swapBusy: Long,
@@ -140,7 +149,7 @@ class MainActivity : WearableActivity()
 
         // Todo: to move as option and let this. We can't supposing the number of cpu cores
         //       and it has to be specified by the final user using a specific option menu.
-        val cpuLoadPercentage = (cpuLoad / N_CORES) * 100
+        val cpuLoadPercentage = (CPU_LOAD / N_CORES) * 100
 
         cpu_load_placeholder.text =  "%.2f".format(cpuLoadPercentage)
         ram_used_placeholder.text = (ramBusy / Byte).toString()

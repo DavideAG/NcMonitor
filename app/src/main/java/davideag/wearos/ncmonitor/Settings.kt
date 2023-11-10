@@ -25,12 +25,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.wearable.activity.ConfirmationActivity
 import android.support.wearable.activity.WearableActivity
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.SpinnerAdapter
 import com.google.android.wearable.intent.RemoteIntent
+import kotlinx.android.synthetic.main.activity_main.cpu_load_placeholder
 import kotlinx.android.synthetic.main.activity_settings.*
 
 
 const val VERSION = BuildConfig.VERSION_NAME
 const val AUTHOR_WEBSITE = "http://giorgiodavide.it"
+val CPU_CORES = (1..32).toList()
 
 
 class Settings : WearableActivity()
@@ -41,7 +48,32 @@ class Settings : WearableActivity()
         setContentView(R.layout.activity_settings)
 
         version_number_placeholder.text = VERSION
+        cpuSpinnerInit()
         creator_webpage.setOnClickListener{ launchBrowserOnPhone() }
+    }
+
+    /* This method will configure the CPU spinner
+     */
+    private fun cpuSpinnerInit()
+    {
+        // set the elements of the spinner (CPU_CORES
+        val adapter: ArrayAdapter<Int> = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_item, CPU_CORES)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        cpu_spinner.adapter = adapter
+
+        // configure the selected N_CORES
+        val selectedItemIndex = CPU_CORES.indexOf(N_CORES)
+        cpu_spinner.setSelection(selectedItemIndex)
+
+        // handle the new N_CORES value
+        cpu_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                N_CORES = CPU_CORES[position]
+                Log.d("selected cpu cores", "$N_CORES")
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
     /* This method will launch the phone browser
@@ -56,7 +88,7 @@ class Settings : WearableActivity()
         )
         startActivity(intentAnimation)
 
-        // launch the browser in the phone
+        // launch the phone browser
         val intentBrowser = Intent(Intent.ACTION_VIEW)
             .addCategory(Intent.CATEGORY_BROWSABLE)
             .setData(Uri.parse(AUTHOR_WEBSITE))
