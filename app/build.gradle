@@ -10,7 +10,7 @@ android {
         minSdkVersion 25
         targetSdkVersion 30
         versionCode 8
-        versionName "0.5.4"
+        versionName "1.0.0"
     }
 
     buildTypes {
@@ -19,6 +19,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'davideag.wearos.ncmonitor'
 }
 
 dependencies {

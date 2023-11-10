@@ -28,11 +28,13 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.math.roundToInt
+import java.net.HttpURLConnection
+
 
 
 const val Byte = 1024
-const val N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
+var N_CORES = 4   /* number of cores in your server. 4 for RPi4. */
+var CPU_LOAD = 0.0
 
 
 class MainActivity : WearableActivity()
@@ -63,6 +65,14 @@ class MainActivity : WearableActivity()
         }
     }
 
+    /* Refresh the cpu_load_placeholder with the new N_CORES.
+     * We need to handle the new number of CPU cores to compute the CPU load
+     */
+    override fun onRestart() {
+        super.onRestart()
+        cpu_load_placeholder.text = "%.2f".format((CPU_LOAD / N_CORES) * 100)
+    }
+
     /* This method shows the results retrieved from
      * the server. View are populated correctly.
      * In case of error a message is displayed
@@ -78,22 +88,22 @@ class MainActivity : WearableActivity()
 
             val responseObject = json.getJSONObject("ocs")
             val metaObject = responseObject.getJSONObject("meta")
-
             val statusCode = metaObject.getInt("statuscode")
 
-            if (statusCode == 200) {
+            if (statusCode == HttpURLConnection.HTTP_OK) {
                 status_code_response_layout.visibility = View.GONE
                 status_message_response_layout.visibility = View.GONE
                 server_name_url.visibility = View.VISIBLE
                 server_name_url.text = serverURL
 
-                val dataObject =  responseObject.getJSONObject("data")
-                val nextcloudObject =  dataObject.getJSONObject("nextcloud")
-                val systemObject =  nextcloudObject.getJSONObject("system")
+                val dataObject = responseObject.getJSONObject("data")
+                val nextcloudObject = dataObject.getJSONObject("nextcloud")
+                val systemObject = nextcloudObject.getJSONObject("system")
 
                 // cpu load
-                var cpuLoad = systemObject.getJSONArray("cpuload")[0]
-                if (cpuLoad is Int) cpuLoad = cpuLoad.toDouble()
+                CPU_LOAD = systemObject.getJSONArray("cpuload")[0] as Double
+                //var cpuLoad = systemObject.getJSONArray("cpuload")[0]
+                //if (CPU_LOAD is Int) CPU_LOAD = CPU_LOAD
                 // ram
                 val ramTotal = systemObject.getLong("mem_total")
                 val ramFree = systemObject.getLong("mem_free")
@@ -101,9 +111,9 @@ class MainActivity : WearableActivity()
                 val swapTotal = systemObject.getLong("swap_total")
                 val swapFree = systemObject.getLong("swap_free")
                 // disk
-                val diskFree = systemObject.getDouble("freespace")
+                val diskFree = systemObject.getLong("freespace")
 
-                updateViews(cpuLoad as Double, ramTotal-ramFree, ramTotal,
+                updateViews(ramTotal-ramFree, ramTotal,
                     swapTotal-swapFree, swapTotal, diskFree)
 
             } else {
@@ -130,22 +140,18 @@ class MainActivity : WearableActivity()
      * using the information coming from the server.
      */
     private fun updateViews(
-        cpuLoad: Double,
         ramBusy: Long,
         ramTotal: Long,
         swapBusy: Long,
         swapTotal: Long,
-        diskFree: Double)
+        diskFree: Long)
     {
 
         // Todo: to move as option and let this. We can't supposing the number of cpu cores
         //       and it has to be specified by the final user using a specific option menu.
-        // cpu_load_placeholder.text = cpuLoad.toString()
+        val cpuLoadPercentage = (CPU_LOAD / N_CORES) * 100
 
-        val cpuLoad3Digit = (((cpuLoad * 100) / N_CORES) * 1000.0).roundToInt() / 1000.0
-        val cpuLoad2Digit = (cpuLoad3Digit * 100.0).roundToInt() / 100.0
-
-        cpu_load_placeholder.text =  cpuLoad2Digit.toString()
+        cpu_load_placeholder.text =  "%.2f".format(cpuLoadPercentage)
         ram_used_placeholder.text = (ramBusy / Byte).toString()
         ram_total_placeholder.text = (ramTotal / Byte).toString()
         swap_used_placeholder.text = (swapBusy / Byte).toString()
@@ -159,15 +165,16 @@ class MainActivity : WearableActivity()
     /* This function is used to convert the free disk
      * space in an human friendly measure
      */
-    private fun humanReadableByteCountBin(bytes: Double): Pair<String, String> {
+    private fun humanReadableByteCountBin(bytes: Long): Pair<String, String> {
         return when {
-            bytes == Double.MIN_VALUE || bytes < 0 -> Pair("N/A", "")
+            bytes == Long.MIN_VALUE || bytes < 0 -> Pair("N/A", "")
             bytes < 1024L -> Pair("$bytes", "B")
-            bytes <= 0xfffccccccccccccL shr 40 -> Pair("%.1f".format(bytes / (0x1 shl 10)), "KiB")
-            bytes <= 0xfffccccccccccccL shr 30 -> Pair("%.1f".format(bytes / (0x1 shl 20)), "MiB")
-            bytes <= 0xfffccccccccccccL shr 20 -> Pair("%.1f".format(bytes / (0x1 shl 30)), "GiB")
-            bytes <= 0xfffccccccccccccL shr 10 -> Pair("%.1f".format(bytes / (0x1 shl 40)), "TiB")
-            else -> Pair("N/A", "")
+            bytes <= 0xfffccccccccccccL shr 40 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 10)), "KiB")
+            bytes <= 0xfffccccccccccccL shr 30 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 20)), "MiB")
+            bytes <= 0xfffccccccccccccL shr 20 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 30)), "GiB")
+            bytes <= 0xfffccccccccccccL shr 10 -> Pair("%.1f".format(bytes.toDouble() / (0x1 shl 40)), "TiB")
+            bytes <= 0xfffccccccccccccL -> Pair("%.1f".format((bytes shr 10).toDouble() / (0x1 shl 40)), "PiB")
+            else -> Pair("%.1f".format((bytes shr 20).toDouble() / (0x1 shl 40)), "EiB")
         }
     }
 }

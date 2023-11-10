@@ -1,13 +1,22 @@
+## 1.0.0 (November, 10, 2023)
+
+- add cpu core spinner support
+
+## 0.6.0 (November, 7, 2023)
+
+- update to JDK 17 and Gradle 7.5
+- fix bug about free disk space
+
 ## 0.5.4 (April, 27, 2022)
 
 - added a method to show free disk space in a more human friendly way
 
 ## 0.5.3 (April, 27, 2021)
 
-* Defined layout for settings page
-* created author ref to http://giorgiodavide.it with "Open on Phone" animation
-* added spinner for CPUs in order to compute the CPU usage in the correct way (default disabled)
-* added app version information in the setting page
+- Defined layout for settings page
+- created author ref to http://giorgiodavide.it with "Open on Phone" animation
+- added spinner for CPUs in order to compute the CPU usage in the correct way (default disabled)
+- added app version information in the setting page
 
 ## 0.5.2 (July, 14, 2020)
 
